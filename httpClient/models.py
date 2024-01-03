@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from enum import Enum
 import random   
 from faker import Faker
-from typing import List, Optional
+from typing import Dict, List, Optional
 
 
 class Position(Enum):
@@ -49,6 +49,10 @@ class Company:
     def create(cls, name, avgSalary, workers, hiring, jobs):   
         return cls(0, name, avgSalary, workers, hiring, jobs) 
     
+    @classmethod
+    def create_form_json(cls, company: Dict):
+        return cls(company["id"], company["name"], company["avgSalary"], company["workers"], company["hiring"], company["jobs"])
+    
     @staticmethod
     def create_fake_company():
         fake = Faker()
@@ -60,6 +64,23 @@ class Company:
                 hiring=fake.boolean(),
                 jobs=[]
             )
+    
+    def change_random_property(self):
+   
+        # Select a random property name, no Id included
+        random_property_name = random.choice(["name", "avgSalary", "hiring"])
+
+        # Assuming property is an integer, you can change it to a new random value
+        if random_property_name == "hiring":
+            setattr(self, random_property_name, not getattr(self, random_property_name))
+        elif random_property_name == "avgSalary":
+            setattr(self, random_property_name, random.randint(1, 1000))  # Change to a random integer value
+        elif random_property_name == "name":
+            setattr(self, random_property_name, Faker().text(max_nb_chars=100))  # Change to a string value for non-integer properties
+    
+        self.workers = None
+        self.jobs = None
+        print(f"Changed {random_property_name} to: {getattr(self, random_property_name)}")
 
 @dataclass
 class Job:
@@ -121,3 +142,4 @@ class Worker:
                 companyName=company.name
             )
     
+

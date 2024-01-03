@@ -6,7 +6,7 @@ from typing import List, Dict
 from requests import Session
 
 # from .models import Company, Job, Worker
-from .models import Company, Job, Worker, Position
+from httpClient.models import Company, Job, Worker, Position
 
 @dataclass
 class ResponseList:
@@ -31,7 +31,7 @@ class ResponseBool:
 class FindJobClient:
 
     def __init__(self) -> None:
-        self.local_jost = "https://localhost:7044"
+        self.local_jost = "https://localhost:7021"
         self.session = Session()
 
     def get_companies(self) -> ResponseList:
@@ -60,6 +60,22 @@ class FindJobClient:
         response = self.session.post(f'{self.local_jost}/api/Worker', json=asdict(worker), 
                                      headers={'accept': '*/*', 'Content-Type': 'application/json'}, verify=False)
         return ResponseBool(response.ok, response.status_code )   
+    
+    def update_company(self, company: Company):
+        response = self.session.put(f'{self.local_jost}/api/Company/{company.id}', json=asdict(company), 
+                                     headers={'accept': '*/*', 'Content-Type': 'application/json'}, verify=False)
+        return ResponseBool(response.ok, response.status_code )
+    
+    def delete_company(self, company_id):
+        response = self.session.delete(f'{self.local_jost}/api/Company/{company_id}', 
+                                     headers={'accept': '*/*', 'Content-Type': 'application/json'}, verify=False)
+        return ResponseBool(response.ok, response.status_code )
+
+    
+    # def get_company_by_id(self, company_id):
+    #     response = self.session.put(f'{self.local_jost}/api/Company/{company.id}', json=asdict(company), 
+    #                                  headers={'accept': '*/*', 'Content-Type': 'application/json'}, verify=False)
+    #     return ResponseBool(response.ok, response.status_code )
     
     # def post_worker(self, worker: Worker):
     #     response = self.session.post(f'{self.local_jost}/api/Worker', json=asdict(worker), 
