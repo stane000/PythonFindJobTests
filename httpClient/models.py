@@ -94,18 +94,22 @@ class Job:
     @classmethod
     def create(cls, company, position, experience, collage):   
         return cls(0, company, position, experience, collage) 
-
+    
     @classmethod
-    def create_fake_job(cls, company: Company):  
-        fake = Faker()
-        # Generate a fake Job instance
-        return cls(
-                id=0,
-                company=company,
-                position= random.choice(list(Position)),
-                experience=fake.random_int(min=0, max=35),
-                collage= random.choice(list(Position)
-            ))
+    def create_form_json(cls, job: Dict):
+        return cls(job["id"], job["company"], job["avgSalary"], job["position"], job["experience"], job["collage"])
+
+    # @classmethod
+    # def create_fake_job(cls, company: Company):  
+    #     fake = Faker()
+    #     # Generate a fake Job instance
+    #     return cls(
+    #             id=0,
+    #             company=company,
+    #             position= random.choice(list(Position)),
+    #             experience=fake.random_int(min=0, max=35),
+    #             collage= random.choice(list(Position)
+    #         ))
     
 @dataclass
 class Worker:
@@ -127,6 +131,10 @@ class Worker:
                    experience, lookingForJob, companyName)  
     
     @classmethod
+    def create_form_json(cls, company: Dict):
+        return cls(company["id"], company["first"], company["avgSalary"], company["position"], company["experience"], company["collage"])
+    
+    @classmethod
     def create_fake_worker(cls, company: Company):  
         fake = Faker()
         # Generate a fake Job instance
@@ -143,3 +151,23 @@ class Worker:
             )
     
 
+@dataclass
+class JobDto:
+    
+    id: int
+    companyId: int
+    position: int
+    experience: int
+    collage: int
+
+    @classmethod
+    def create_fake_job(cls, company: Company):  
+        fake = Faker()
+        # Generate a fake Job instance
+        return cls(
+                id=0,
+                companyId=company.id,
+                position= random.choice(list(Position)).value[0],
+                experience=fake.random_int(min=0, max=35),
+                collage= random.choice(list(Position)).value[0]
+            )

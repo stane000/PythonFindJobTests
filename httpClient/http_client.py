@@ -70,6 +70,16 @@ class FindJobClient:
         response = self.session.delete(f'{self.local_jost}/api/Company/{company_id}', 
                                      headers={'accept': '*/*', 'Content-Type': 'application/json'}, verify=False)
         return ResponseBool(response.ok, response.status_code )
+    
+    def delete_worker(self, company_id):
+        response = self.session.delete(f'{self.local_jost}/api/Worker/{company_id}', 
+                                        headers={'accept': '*/*', 'Content-Type': 'application/json'}, verify=False)
+        return ResponseBool(response.ok, response.status_code )
+    
+    def delete_job(self, company_id):
+        response = self.session.delete(f'{self.local_jost}/api/Job/{company_id}', 
+                                        headers={'accept': '*/*', 'Content-Type': 'application/json'}, verify=False)
+        return ResponseBool(response.ok, response.status_code )
 
     
     # def get_company_by_id(self, company_id):
