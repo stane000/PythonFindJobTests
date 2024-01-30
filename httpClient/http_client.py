@@ -91,18 +91,6 @@ class FindJobClient:
                                         headers={'accept': '*/*', 'Content-Type': 'application/json'}, verify=False)
         return ResponseBool(response.ok, response.status_code )
 
-    
-    # def get_company_by_id(self, company_id):
-    #     response = self.session.put(f'{self.local_jost}/api/Company/{company.id}', json=asdict(company), 
-    #                                  headers={'accept': '*/*', 'Content-Type': 'application/json'}, verify=False)
-    #     return ResponseBool(response.ok, response.status_code )
-    
-    # def post_worker(self, worker: Worker):
-    #     response = self.session.post(f'{self.local_jost}/api/Worker', json=asdict(worker), 
-    #                                  headers={'accept': '*/*', 'Content-Type': 'application/json'}, verify=False)
-    #     return ResponseBool(response.ok, response.status_code )
-    
-        
 if __name__ == "__main__":
 
     client = FindJobClient()

@@ -209,6 +209,13 @@ def test_delete_job_api():
     assert company_found == None, "Job is still in the list of companies"
 
 
+@pytest.mark.no_db
+def test_simple():
+    a = 5
+    b = 6
+    assert a <  b, "Test failed"
+
+
 if __name__ == '__main__':
-    pytest.main(["-v", "-s", os.path.abspath(__file__)])
+    pytest.main(["-v", "-s", "-m no_db", os.path.abspath(__file__)])
 
