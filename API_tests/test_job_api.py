@@ -6,8 +6,8 @@ import os
 import random
 from functional import seq
 import pytest
-from httpClient.http_client import FindJobClient, Company
-from httpClient.models import JobDto, WorkerDto
+from http_client.http_client import FindJobClient, Company
+from http_client.models import JobDto, WorkerDto
 
 @pytest.mark.job
 @pytest.mark.get
