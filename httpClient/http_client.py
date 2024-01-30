@@ -66,6 +66,16 @@ class FindJobClient:
                                      headers={'accept': '*/*', 'Content-Type': 'application/json'}, verify=False)
         return ResponseBool(response.ok, response.status_code )
     
+    def update_worker(self, worker: Worker):
+        response = self.session.put(f'{self.local_jost}/api/Worker/{worker.id}', json=asdict(worker), 
+                                     headers={'accept': '*/*', 'Content-Type': 'application/json'}, verify=False)
+        return ResponseBool(response.ok, response.status_code )
+    
+    def update_job(self, job: Job):
+        response = self.session.put(f'{self.local_jost}/api/Job/{job.id}', json=asdict(job), 
+                                     headers={'accept': '*/*', 'Content-Type': 'application/json'}, verify=False)
+        return ResponseBool(response.ok, response.status_code )
+    
     def delete_company(self, company_id):
         response = self.session.delete(f'{self.local_jost}/api/Company/{company_id}', 
                                      headers={'accept': '*/*', 'Content-Type': 'application/json'}, verify=False)

@@ -8,31 +8,31 @@ from typing import Dict, List, Optional
 
 
 class Position(Enum):
-    SoftwareEngineer = 0,
-    SoftwareTestEngineer = 1,
-    FrontEndDeveloper = 2,
-    BackEndDeveloper = 3,
-    FullStackDeveloper = 4,
+    SoftwareEngineer = 0
+    SoftwareTestEngineer = 1
+    FrontEndDeveloper = 2
+    BackEndDeveloper = 3
+    FullStackDeveloper = 4
 
-    JuniorSoftwareEngineer = 5,
-    JuniorSoftwareTestEngineer  = 6,
-    JuniorFrontEndDeveloper = 7, 
-    JuniorBackEndDeveloper = 8, 
-    JuniorFullStackDeveloper = 9,
+    JuniorSoftwareEngineer = 5
+    JuniorSoftwareTestEngineer  = 6
+    JuniorFrontEndDeveloper = 7
+    JuniorBackEndDeveloper = 8
+    JuniorFullStackDeveloper = 9
 
-    SeniorSoftwareEngineer = 10,
-    SeniorSoftwareTestEngineer = 11,
-    SeniorFrontEndDeveloper = 12,
-    SeniorBackEndDeveloper = 13,
-    SeniorFullStackDeveloper = 14,
+    SeniorSoftwareEngineer = 10
+    SeniorSoftwareTestEngineer = 11
+    SeniorFrontEndDeveloper = 12
+    SeniorBackEndDeveloper = 13
+    SeniorFullStackDeveloper = 14
 
     ProjectManager = 15
 
-class Collage(Enum):
-    TVZ = 0,
-    FER = 1,
-    PMF = 2,
-    ALGEBRA = 3,
+class College(Enum):
+    TVZ = 0
+    FER = 1
+    PMF = 2
+    ALGEBRA = 3
     FESB = 4
 
 @dataclass
@@ -43,7 +43,7 @@ class Company:
     avgSalary: int
     workers: List
     hiring: bool
-    jobs: []
+    jobs: List
 
     @classmethod
     def create(cls, name, avgSalary, workers, hiring, jobs):   
@@ -89,28 +89,16 @@ class Job:
     company: Company
     position: Position
     experience: int
-    collage: Collage
+    college: College
 
     @classmethod
-    def create(cls, company, position, experience, collage):   
-        return cls(0, company, position, experience, collage) 
+    def create(cls, company, position, experience, college):   
+        return cls(0, company, position, experience, college) 
     
     @classmethod
     def create_form_json(cls, job: Dict):
-        return cls(job["id"], job["company"], job["avgSalary"], job["position"], job["experience"], job["collage"])
+        return cls(job["id"], job["company"], job["avgSalary"], job["position"], job["experience"], job["college"])
 
-    # @classmethod
-    # def create_fake_job(cls, company: Company):  
-    #     fake = Faker()
-    #     # Generate a fake Job instance
-    #     return cls(
-    #             id=0,
-    #             company=company,
-    #             position= random.choice(list(Position)),
-    #             experience=fake.random_int(min=0, max=35),
-    #             collage= random.choice(list(Position)
-    #         ))
-    
 @dataclass
 class Worker:
 
@@ -131,8 +119,9 @@ class Worker:
                    experience, lookingForJob, companyName)  
     
     @classmethod
-    def create_form_json(cls, company: Dict):
-        return cls(company["id"], company["first"], company["avgSalary"], company["position"], company["experience"], company["collage"])
+    def create_form_json(cls, worker: Dict):
+        return cls(worker["id"], worker["firstName"], worker["lastName"], worker["age"], worker["college"],
+                    worker["position"], worker["experience"], worker["lookingForJob"], worker["company"])
     
     @classmethod
     def create_fake_worker(cls, company: Company):  
@@ -143,22 +132,62 @@ class Worker:
                 firstName=fake.first_name(),
                 lastName=fake.last_name(),
                 age=fake.random_int(min=0, max=65),
-                college= random.choice(list(Collage)).name,
+                college= random.choice(list(College)).name,
                 position= random.choice(list(Position)).name,
                 experience=fake.random_int(min=0, max=35),
                 lookingForJob=fake.boolean(), 
                 companyName=company.name
             )
     
+@dataclass
+class WorkerDto:
+
+    id: int
+    firstName: str
+    lastName: str
+    age: int
+    college: int
+    position: int
+    experience: str
+    lookingForJob: bool
+    companyId: int
+    company: Company
+
+    @classmethod
+    def create_form_json(cls, worker: Dict):
+        return cls(worker["id"], worker["firstName"], worker['lastName'], worker["age"], College[worker["college"]].value,
+                    Position[worker["position"]].value, worker["experience"], worker["lookingForJob"], worker['companyId'], None)
+        
+    @classmethod
+    def create_fake_worker(cls, company: Company):  
+        fake = Faker()
+        # Generate a fake Worker instance
+        return cls(
+                id=0,
+                firstName=fake.first_name(),
+                lastName=fake.last_name(),
+                age=fake.random_int(min=0, max=65),
+                college= random.choice(list(College)).value,
+                position= random.choice(list(Position)).value,
+                experience=fake.random_int(min=0, max=35),
+                lookingForJob=fake.boolean(), 
+                companyId=company.id,
+                company=None
+            )
 
 @dataclass
 class JobDto:
     
     id: int
     companyId: int
+    company: Optional[Company]
     position: int
     experience: int
-    collage: int
+    college: int
+
+    @classmethod
+    def create_form_json(cls, job: Dict):
+        return cls(job["id"], job["companyId"], None, Position[job["position"]].value, job["experience"],  College[job["college"]].value)
 
     @classmethod
     def create_fake_job(cls, company: Company):  
@@ -167,7 +196,8 @@ class JobDto:
         return cls(
                 id=0,
                 companyId=company.id,
-                position= random.choice(list(Position)).value[0],
+                company=None,
+                position= random.choice(list(Position)).value,
                 experience=fake.random_int(min=0, max=35),
-                collage= random.choice(list(Position)).value[0]
+                college= random.choice(list(College)).value
             )

@@ -1,6 +1,4 @@
 
-
-
 # Correct import statement
 # from httpClient.http_client import FindJobClient
 
@@ -8,8 +6,8 @@ import os
 import random
 from functional import seq
 import pytest
-from httpClient.http_client import FindJobClient, Company, Job, Worker
-from httpClient.models import JobDto
+from httpClient.http_client import FindJobClient, Company
+from httpClient.models import JobDto, WorkerDto
 
 @pytest.mark.job
 @pytest.mark.get
@@ -62,7 +60,8 @@ def test_create_job_api():
     # Craete
     client = FindJobClient()
     try:
-        random_company = random.choice(client.get_companies().response)
+        res = client.get_companies().response
+        random_company = random.choice(res)
     except Exception as e:
         raise Exception(f"Could not choose a random company beacuse there is no company: {e.args[0]}") 
     jobs_count = len(random_company["jobs"])
@@ -72,7 +71,27 @@ def test_create_job_api():
     response = client.post_job(fake_job)
     assert response.status_code ==  200, f"Wrong status code: {response.status_code}, shuld be 200"
     assert response.response, f"No response"
-    assert len(seq(client.get_companies().response).find(lambda c : c["id"] == random_company["id"])) - 1 == jobs_count
+    assert len(seq(client.get_companies().response).find(lambda c : c["id"] == random_company["id"])["jobs"]) - 1 == jobs_count
+
+@pytest.mark.worker
+@pytest.mark.create
+def test_create_worker_api():
+
+    # Craete
+    client = FindJobClient()
+    try:
+        res = client.get_companies().response
+        random_company = random.choice(res)
+    except Exception as e:
+        raise Exception(f"Could not choose a random company beacuse there is no company: {e.args[0]}") 
+    worker_count = len(random_company["workers"])
+    fake_worker = WorkerDto.create_fake_worker(Company.create_form_json(random_company))
+
+    # Act
+    response = client.post_worker(fake_worker)
+    assert response.status_code ==  200, f"Wrong status code: {response.status_code}, shuld be 200"
+    assert response.response, f"No response"
+    assert len(seq(client.get_companies().response).find(lambda c : c["id"] == random_company["id"])["workers"]) - 1 == worker_count
 
 @pytest.mark.company
 @pytest.mark.update
@@ -99,19 +118,22 @@ def test_update_worker_api():
 
     # Create
     client = FindJobClient()
-    random_company = random.choice(client.get_companies().response)
-    company = Worker.create_form_json(random_company)
-    company.change_random_property()
+    random_worker = random.choice(client.get_workers().response)
+    worker = WorkerDto.create_form_json(random_worker)
+
+
+    # worker.change_random_property()-------------------------------------------------------treba dodat
+
+    worker.firstName = f"Update->{worker.firstName}"
 
     # Act
-    response = client.update_company(company)
-    updated_compnay = seq(client.get_companies().response).find(lambda c : c["id"] == company.id)
+    response = client.update_worker(worker)
+    updated_worker = seq(client.get_workers().response).find(lambda c : c["id"] == worker.id)
 
      # Assert
     assert response.status_code ==  204, f"Wrong status code: {response.status_code}, shuld be 204"
     assert response.response, f"No response"
-    assert random_company != updated_compnay, f"Company is not updated: {updated_compnay}, before: {random_company}"
-
+    assert random_worker != updated_worker, f"Worker is not updated: {updated_worker}, before: {random_worker}"
 
 @pytest.mark.job
 @pytest.mark.update
@@ -119,22 +141,24 @@ def test_update_job_api():
 
     # Create
     client = FindJobClient()
-    random_company = random.choice(client.get_jobs().response)
-    company = Job.create_form_json(random_company)
-    company.change_random_property()
+    random_job = random.choice(client.get_jobs().response)
+    job = JobDto.create_form_json(random_job)
+
+    # job.change_random_property()-------------------------------------------------------treba dodat
+
+    job.experience = job.experience + 1
 
     # Act
-    response = client.update_company(company)
-    updated_compnay = seq(client.get_companies().response).find(lambda c : c["id"] == company.id)
+    response = client.update_job(job)
+    updated_job= seq(client.get_companies().response).find(lambda c : c["id"] == job.id)
 
      # Assert
     assert response.status_code ==  204, f"Wrong status code: {response.status_code}, shuld be 204"
     assert response.response, f"No response"
-    assert random_company != updated_compnay, f"Company is not updated: {updated_compnay}, before: {random_company}"
-
+    assert random_job != updated_job, f"Job is not updated: {updated_job}, before: {random_job}"
 
 @pytest.mark.company
-@pytest.mark.delte
+@pytest.mark.delete
 def test_delete_company_api():
 
     #  Create
@@ -151,7 +175,7 @@ def test_delete_company_api():
     assert company_found == None, "Company is still in the list of companies"
 
 @pytest.mark.worker
-@pytest.mark.delte
+@pytest.mark.delete
 def test_delete_worker_api():
 
     #  Create
@@ -168,7 +192,7 @@ def test_delete_worker_api():
     assert company_found == None, "Worker is still in the list of companies"
 
 @pytest.mark.job
-@pytest.mark.delte
+@pytest.mark.delete
 def test_delete_job_api():
 
     #  Create
@@ -176,7 +200,7 @@ def test_delete_job_api():
     random_job= random.choice(client.get_jobs().response)
 
     #  Act
-    response = client.delete_company(random_job["id"])
+    response = client.delete_job(random_job["id"])
 
     # Assert
     assert response.status_code ==  204, f"Wrong status code: {response.status_code}, shuld be 204"
@@ -186,7 +210,5 @@ def test_delete_job_api():
 
 
 if __name__ == '__main__':
-    pytest.main(["-v", "-s", "-m create and job", os.path.abspath(__file__)])
-    # test_create_company_api()
-    # test_delete_company_api()
+    pytest.main(["-v", "-s", os.path.abspath(__file__)])
 
