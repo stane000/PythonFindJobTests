@@ -3,7 +3,7 @@
 # from httpClient.http_client import FindJobClient
 
 import sys
-sys.path.extend([r"..\.."])
+sys.path.extend([r"..\\http_client"])
 import os
 import random
 from functional import seq
