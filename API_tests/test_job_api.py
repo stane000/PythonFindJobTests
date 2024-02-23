@@ -2,6 +2,8 @@
 # Correct import statement
 # from httpClient.http_client import FindJobClient
 
+import sys
+sys.path.extend([r"..\.."])
 import os
 import random
 from functional import seq
